@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7f5f0" />
+  <title>סיבובים וסדר בקובייה | פריזמה</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <img class="brand-logo" src="assets/prisma-logo.svg" alt="Prisming - פריזמה" />
+      <h1>סיבובים וסדר בקובייה</h1>
+      <div class="top-actions" aria-label="פעולות כלליות">
+        <button class="prisma-icon-btn" id="resetBtn" type="button" title="איפוס" aria-label="איפוס">
+          <img src="assets/restart_rounded_rect.svg" alt="" aria-hidden="true" />
+        </button>
+        <button class="prisma-icon-btn" id="helpBtn" type="button" title="עזרה" aria-label="עזרה">
+          <img src="assets/instructions_rounded_rect.svg" alt="" aria-hidden="true" />
+        </button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="instruction-card">
+        <h2>מה אפשר לחקור?</h2>
+        <p>אפשר לסובב כל פאה מיד, לערבב את הקובייה ולנסות לסדר אותה, או לעבור למצב <strong>בניית רצף</strong> ולבדוק אחרי כמה חזרות אותו רצף מחזיר את הקובייה למצבה ההתחלתי.</p>
+        <p class="key-idea"><strong>הסדר של רצף</strong> הוא מספר הפעמים שצריך לחזור על אותו רצף פעולות עד שחוזרים בדיוק למצב שממנו התחלנו.</p>
+        <div class="mini-guide">
+          <span><bdi dir="ltr">U</bdi> – למעלה</span>
+          <span><bdi dir="ltr">R</bdi> – ימין</span>
+          <span><bdi dir="ltr">F</bdi> – קדימה</span>
+          <span><bdi dir="ltr">D</bdi> – למטה</span>
+          <span><bdi dir="ltr">L</bdi> – שמאל</span>
+          <span><bdi dir="ltr">B</bdi> – אחורה</span>
+        </div>
+      </section>
+
+      <section class="cube-card">
+        <div class="cube-meta">
+          <div>
+            <div class="eyebrow">קובייה אחת · סיבוב · ערבוב · סדר</div>
+            <h2>הקובייה</h2>
+          </div>
+          <div class="cube-status">
+            <div class="moved-counter"><span id="movedCount">0</span> חלקים אינם במקום</div>
+            <div class="solved-badge" id="solvedBadge">הקובייה מסודרת</div>
+          </div>
+        </div>
+
+        <div class="cube-stage" id="cubeStage" aria-label="קובייה תלת־ממדית. גררו כדי לסובב את נקודת המבט.">
+          <div class="scene" id="scene"></div>
+          <div class="orientation-note">
+            <strong>שימו לב:</strong> סיבוב המבט לא משנה את שמות הפאות. האות שעל המדבקה המרכזית מציינת תמיד איזו פאה זו.
+          </div>
+          <div class="drag-hint">גררו בעכבר או באצבע כדי לסובב את המבט</div>
+        </div>
+
+        <div class="cube-bottom-actions">
+          <button class="primary-inline-btn" id="shuffleBtn" type="button">ערבוב הקובייה</button>
+          <button class="secondary-btn" id="solvedBtn" type="button">חזרה לקובייה מסודרת</button>
+        </div>
+      </section>
+
+      <aside class="control-card">
+        <div class="control-heading stacked">
+          <h2>סובבו את הקובייה</h2>
+          <div class="mode-switch wide" role="tablist" aria-label="אופן פעולה">
+            <button class="mode-btn active" id="directModeBtn" type="button">סיבוב ישיר</button>
+            <button class="mode-btn" id="sequenceModeBtn" type="button">בניית רצף</button>
+          </div>
+        </div>
+
+        <p class="mode-explanation" id="modeExplanation">כל לחיצה מסובבת מיד את הפאה המתאימה בקובייה. שמות הפאות קבועים גם כשמסובבים את נקודת המבט.</p>
+
+        <div class="face-key" aria-label="מפתח הפאות הקבועות">
+          <div class="face-key-title">מפתח פאות קבוע</div>
+          <div class="face-key-grid">
+            <span><i class="swatch swatch-u"></i><bdi dir="ltr">U</bdi> למעלה</span>
+            <span><i class="swatch swatch-d"></i><bdi dir="ltr">D</bdi> למטה</span>
+            <span><i class="swatch swatch-f"></i><bdi dir="ltr">F</bdi> קדימה</span>
+            <span><i class="swatch swatch-b"></i><bdi dir="ltr">B</bdi> אחורה</span>
+            <span><i class="swatch swatch-r"></i><bdi dir="ltr">R</bdi> ימין</span>
+            <span><i class="swatch swatch-l"></i><bdi dir="ltr">L</bdi> שמאל</span>
+          </div>
+        </div>
+
+        <div class="move-grid" id="moveGrid" aria-label="סיבובי הקובייה">
+          <button data-move="U"><bdi dir="ltr">U</bdi></button>
+          <button data-move="R"><bdi dir="ltr">R</bdi></button>
+          <button data-move="F"><bdi dir="ltr">F</bdi></button>
+          <button data-move="D"><bdi dir="ltr">D</bdi></button>
+          <button data-move="L"><bdi dir="ltr">L</bdi></button>
+          <button data-move="B"><bdi dir="ltr">B</bdi></button>
+          <button data-move="U'"><bdi dir="ltr">U′</bdi></button>
+          <button data-move="R'"><bdi dir="ltr">R′</bdi></button>
+          <button data-move="F'"><bdi dir="ltr">F′</bdi></button>
+          <button data-move="D'"><bdi dir="ltr">D′</bdi></button>
+          <button data-move="L'"><bdi dir="ltr">L′</bdi></button>
+          <button data-move="B'"><bdi dir="ltr">B′</bdi></button>
+        </div>
+
+        <div class="sequence-tools" id="sequenceTools" hidden>
+          <div class="sequence-label">הרצף שלכם</div>
+          <div class="edit-row">
+            <button class="secondary-btn compact" id="undoSequenceBtn" type="button">ביטול אחרון</button>
+            <button class="secondary-btn compact" id="clearSequenceBtn" type="button">ניקוי</button>
+          </div>
+          <div class="sequence-strip" id="sequenceStrip" aria-live="polite">בחרו פעולות</div>
+          <button class="secondary-btn run-btn" id="runSequenceBtn" type="button">הפעלת הרצף פעם אחת</button>
+          <div class="result-box">
+            <div class="result-title">הסדר של הרצף</div>
+            <div class="result-value" id="orderValue">—</div>
+            <div class="result-note" id="orderNote">בנו רצף כדי לחשב.</div>
+          </div>
+          <button class="primary-btn" id="calculateBtn" type="button">חישוב הסדר</button>
+        </div>
+
+        <label class="toggle-row">
+          <input id="dimSolvedToggle" type="checkbox" />
+          <span>הדגישו את החלקים שזזו</span>
+        </label>
+
+        <div class="insight-card" id="insightCard">
+          <div class="insight-kicker">רעיון לחקירה</div>
+          <p>נסו <bdi dir="ltr">R</bdi> ואז <bdi dir="ltr">U</bdi>. החזירו להתחלה ונסו הפוך: <bdi dir="ltr">U</bdi> ואז <bdi dir="ltr">R</bdi>. בדקו אם מתקבל אותו מצב.</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <dialog id="helpDialog" class="help-dialog">
+    <form method="dialog">
+      <button class="dialog-close" aria-label="סגירה">×</button>
+      <h2>עזרה והסבר מלא</h2>
+
+      <section class="help-section">
+        <h3>1. מה מייצגות האותיות?</h3>
+        <p>בקוביית רוביק לכל פאה יש שם קבוע. השמות אינם משתנים כאשר מסובבים את הקובייה רק לצורך שינוי נקודת המבט.</p>
+        <div class="help-table-wrap">
+          <table class="help-table">
+            <thead><tr><th>סימון</th><th>שם</th><th>הצבע ביישומון</th></tr></thead>
+            <tbody>
+              <tr><td><bdi dir="ltr">U</bdi></td><td>למעלה – Up</td><td>לבן</td></tr>
+              <tr><td><bdi dir="ltr">D</bdi></td><td>למטה – Down</td><td>צהוב</td></tr>
+              <tr><td><bdi dir="ltr">F</bdi></td><td>קדימה – Front</td><td>כתום</td></tr>
+              <tr><td><bdi dir="ltr">B</bdi></td><td>אחורה – Back</td><td>אדום</td></tr>
+              <tr><td><bdi dir="ltr">R</bdi></td><td>ימין – Right</td><td>ירוק</td></tr>
+              <tr><td><bdi dir="ltr">L</bdi></td><td>שמאל – Left</td><td>כחול</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="help-callout"><strong>חשוב:</strong> אם גררתם את הקובייה כך שהפאה הירוקה נראית בצד שמאל של המסך, היא עדיין פאת <bdi dir="ltr">R</bdi>. סימון האות במרכז כל פאה עוזר לזהות אותה בכל זווית צפייה.</p>
+      </section>
+
+      <section class="help-section">
+        <h3>2. מה זה <bdi dir="ltr">B′</bdi> או <bdi dir="ltr">R′</bdi>?</h3>
+        <p>הסימן הקטן <bdi dir="ltr">′</bdi> נקרא <strong>Prime</strong> (פריים). הוא אומר לבצע את אותו סיבוב בכיוון ההפוך.</p>
+        <ul>
+          <li><bdi dir="ltr">R</bdi> – מסובבים את פאת ימין רבע סיבוב.</li>
+          <li><bdi dir="ltr">R′</bdi> – מסובבים את פאת ימין רבע סיבוב בכיוון ההפוך.</li>
+          <li><bdi dir="ltr">B</bdi> – מסובבים את הפאה האחורית.</li>
+          <li><bdi dir="ltr">B′</bdi> – מסובבים את הפאה האחורית בכיוון ההפוך.</li>
+        </ul>
+        <p>כשמסתכלים ישירות על הפאה שאותה מסובבים, פעולה בלי <bdi dir="ltr">′</bdi> היא סיבוב של 90° בכיוון השעון, ופעולה עם <bdi dir="ltr">′</bdi> היא 90° נגד כיוון השעון.</p>
+      </section>
+
+      <section class="help-section">
+        <h3>3. מצבי העבודה</h3>
+        <ol>
+          <li><strong>סיבוב ישיר:</strong> כל לחיצה על אחת הפעולות מסובבת מיד את הפאה.</li>
+          <li><strong>ערבוב הקובייה:</strong> היישומון מבצע רצף אקראי של סיבובים. לאחר מכן אפשר לנסות לסדר את הקובייה.</li>
+          <li><strong>בניית רצף:</strong> הפעולות אינן מתבצעות מיד אלא נשמרות כרצף. אפשר להפעיל את הרצף ולחשב את הסדר שלו.</li>
+          <li><strong>הדגישו את החלקים שזזו:</strong> כל חלק שעדיין נמצא בדיוק במקומו המקורי הופך לכהה, והחלקים שזזו נשארים בצבע מלא. צורת הקובייה נשמרת.</li>
+        </ol>
+      </section>
+
+      <section class="help-section">
+        <h3>4. מהו הסדר של רצף?</h3>
+        <p><strong>הסדר</strong> הוא מספר הפעמים שצריך לחזור על אותו רצף פעולות עד שהקובייה חוזרת בדיוק למצב שממנו התחילה.</p>
+        <p>לדוגמה, אם רצף מסוים מחזיר את הקובייה להתחלה לאחר ארבע חזרות, הסדר שלו הוא 4.</p>
+      </section>
+
+      <section class="help-section">
+        <h3>5. שינוי נקודת המבט</h3>
+        <p>גרירה של הקובייה בעכבר או באצבע <strong>אינה מסובבת פאה</strong>. היא רק משנה מאיזה כיוון מסתכלים על הקובייה. האותיות <bdi dir="ltr">U D F B R L</bdi> נשארות משויכות לאותן פאות כל הזמן.</p>
+      </section>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
